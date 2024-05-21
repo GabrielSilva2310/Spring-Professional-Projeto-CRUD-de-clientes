@@ -1,6 +1,6 @@
 package com.springdevsuperior.CustomersCRUD.services;
 
-import java.util.Optional;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,6 +31,28 @@ public class ClientService {
 		Client client=repository.findById(id).get();
 		return new ClientDTO(client);		
 	}
+	
+	@Transactional
+	public ClientDTO insert(ClientDTO dto) {
+		Client client=new Client();
+		CopyDTOtoClient(dto,client);
+		repository.save(client);
+		return new ClientDTO(client);
+	
+	}
+
+	private void CopyDTOtoClient(ClientDTO dto, Client client) {
+		client.setName(dto.getName());
+		client.setCpf(dto.getCpf());
+		client.setIncome(dto.getIncome());
+		client.setBirthDate(dto.getBirthDate());
+		client.setChildren(dto.getChildren());
+		
+	}
+	
+	
+	
+	
 	
 	
 	
