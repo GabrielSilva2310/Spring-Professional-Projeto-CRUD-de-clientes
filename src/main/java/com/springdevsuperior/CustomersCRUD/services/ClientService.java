@@ -1,5 +1,7 @@
 package com.springdevsuperior.CustomersCRUD.services;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,12 @@ public class ClientService {
 		Page<Client> result=repository.findAll(pageable);
 		return result.map(x-> new ClientDTO(x));
 		
+	}
+	
+	@Transactional(readOnly = true)
+	public ClientDTO findById(Long id) {
+		Client client=repository.findById(id).get();
+		return new ClientDTO(client);		
 	}
 	
 	
