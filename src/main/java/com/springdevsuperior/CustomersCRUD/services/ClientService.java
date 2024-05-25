@@ -12,6 +12,10 @@ import com.springdevsuperior.CustomersCRUD.dto.ClientDTO;
 import com.springdevsuperior.CustomersCRUD.entities.Client;
 import com.springdevsuperior.CustomersCRUD.repositories.ClientRepository;
 
+import com.springdevsuperior.CustomersCRUD.services.exceptions.ResourceNotFoundException;
+
+import jakarta.persistence.EntityNotFoundException;
+
 
 @Service
 public class ClientService {
@@ -28,7 +32,8 @@ public class ClientService {
 	
 	@Transactional(readOnly = true)
 	public ClientDTO findById(Long id) {
-		Client client=repository.findById(id).get();
+		Client client=repository.findById(id).orElseThrow(
+				()-> new ResourceNotFoundException("Resource not found!") );
 		return new ClientDTO(client);		
 	}
 	
@@ -43,16 +48,25 @@ public class ClientService {
 	
 	@Transactional
 	public ClientDTO update(Long id, ClientDTO dto) {
-		Client updateClient=repository.getReferenceById(id);
-		CopyDTOtoClient(dto, updateClient);
-		updateClient=repository.save(updateClient);
-		return new ClientDTO(updateClient);
+		try {
+			Client updateClient=repository.getReferenceById(id);
+			CopyDTOtoClient(dto, updateClient);
+			updateClient=repository.save(updateClient);
+			return new ClientDTO(updateClient);
+		}
+		catch(EntityNotFoundException e) {
+			throw new ResourceNotFoundException("Resource not found!");
+		}
 		
 	}
 	
 	@Transactional
 	public void delete(Long id) {
+		if(!repository.existsById(id)) {
+			throw new ResourceNotFoundException("Resource not found!");
+		}
 		repository.deleteById(id);
+		
 	}
 
 	private void CopyDTOtoClient(ClientDTO dto, Client client) {
