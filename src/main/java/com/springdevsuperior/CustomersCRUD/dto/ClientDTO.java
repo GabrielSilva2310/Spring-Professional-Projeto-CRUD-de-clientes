@@ -4,12 +4,20 @@ import java.time.LocalDate;
 
 import com.springdevsuperior.CustomersCRUD.entities.Client;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.PastOrPresent;
+
 public class ClientDTO {
 	
 	private Long id;
+	
+	@NotBlank(message = "Required field!")
 	private String name;
+	
 	private String cpf;
 	private Double income;
+	
+	@PastOrPresent(message = " The birth date cannot be in the future!")
 	private LocalDate birthDate;
 	private Integer children;
 	
